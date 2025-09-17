@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Explorer - Login</title>
+
+
+
+
+  <link rel="icon" type="image/png" href="FAVICON 2.png">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      min-height: 100vh;  /* Background Image */
+      background-image: url('desktop-wallpaper-painting-ideas-aesthetic-mountain.jpg'); /* Image path */
+      background-size: cover;    /* Fit screen */
+      background-repeat: no-repeat; /* Don’t repeat */
+      background-position: center;  /* Center the image */
+    }
+
+    /* Header with Login/Logout */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #38bdf8;
+      text-shadow: 0 0 10px #0ea5e9;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .auth-btn {
+      padding: 10px 20px;
+      border: 2px solid #38bdf8;
+      border-radius: 8px;
+      background: transparent;
+      color: #38bdf8;
+      cursor: pointer;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .auth-btn:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: scale(1.05);
+    }
+
+    .user-info {
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* Login/Signup Modal */
+    .auth-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .auth-form {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #1e293b, #334155);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .auth-form h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #38bdf8;
+      font-size: 28px;
+    }
+
+
+
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #e2e8f0;
+      font-weight: bold;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #475569;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      color: white;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 15px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(56, 189, 248, 0.3);
+    }
+
+    .switch-form {
+      text-align: center;
+      color: #94a3b8;
+    }
+
+    .switch-form a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .switch-form a:hover {
+      text-decoration: underline;
+    }
+
+    .close-auth {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      color: #94a3b8;
+      font-size: 28px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .close-auth:hover {
+      color: #38bdf8;
+    }
+
+    /* Main App Styles */
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .app-content {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .app-content.active {
+      display: block;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #38bdf8;
+      text-shadow: 0 0 10px #0ea5e9;
+      font-size: 2.5em;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 40px;
+      width: 100%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .search-box input {
+      flex: 1;
+      padding: 15px;
+      border: 2px solid #38bdf8;
+      border-radius: 12px;
+      outline: none;
+      font-size: 16px;
+      background: rgba(15, 23, 42, 0.8);
+      color: white;
+    }
+
+    .search-box input::placeholder {
+      color: #94a3b8;
+    }
+
+    .search-box button {
+      padding: 15px 25px;
+      border: 2px solid #38bdf8;
+      border-radius: 12px;
+      background: transparent;
+      color: #38bdf8;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      white-space: nowrap;
+    }
+
+    .search-box button:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      transform: scale(1.05);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s;
+      cursor: pointer;
+      background: rgba(30, 41, 59, 0.5);
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .credit {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .credit a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+
+    /* Welcome Screen */
+    .welcome-screen {
+      text-align: center;
+      padding: 100px 20px;
+    }
+
+    .welcome-screen h1 {
+      font-size: 3.5em;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-screen p {
+      font-size: 1.2em;
+      color: #94a3b8;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Modal for images */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      margin: auto;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .modal-image {
+      width: 100%;
+      height: auto;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .close-btn, .download-btn {
+      position: absolute;
+      top: 15px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1001;
+      transition: 0.3s;
+    }
+
+    .close-btn {
+      right: 25px;
+    }
+
+    .download-btn {
+      right: 80px;
+    }
+
+    .close-btn:hover, .download-btn:hover {
+      background: rgba(56, 189, 248, 0.8);
+      transform: scale(1.1);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .search-box {
+        flex-direction: column;
+      }
+
+      .gallery {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .auth-form {
+        padding: 30px 20px;
+      }
+
+      .welcome-screen h1 {
+        font-size: 2.5em;
+      }
+    }   @keyframes glow {
+  0% { text-shadow: 0 0 5px #ff00ff, 0 0 20px #ff00ff; }
+  50% { text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff; }
+  100% { text-shadow: 0 0 5px #ff00ff, 0 0 20px #ff00ff; }
+}
+h1 {
+  color: #fff;
+  animation: glow 2s infinite alternate;
+}
+             
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">🖼️ Image Explorer</div>
+    <div id="authSection">
+      <div class="auth-buttons" id="authButtons">
+        <button class="auth-btn" onclick="showLoginForm()">Login</button>
+        <button class="auth-btn" onclick="showSignupForm()">Sign Up</button>
+      </div>
+      <div class="user-info" id="userInfo" style="display: none;">
+        <span>Welcome, <span id="userName"></span>!</span>
+        <button class="auth-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Screen -->
+  <div id="welcomeScreen" class="welcome-screen">
+    <h1>Welcome to Image Explorer</h1>
+    <p>Discover amazing images from Pexels and Pixabay, or upload your own photos. Please login or sign up to continue.</p>
+    <div class="auth-buttons">
+      <button class="auth-btn" onclick="showLoginForm()" style="font-size: 18px; padding: 15px 30px;">Get Started - Login</button>
+    </div>
+  </div>
+<br><br><br>
+  <!-- Main App Content -->
+  <div class="container">
+    <div id="appContent" class="app-content">
+      <h1>✨ Explore Amazing Images ✨</h1>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search images... (e.g. cars, nature, food)">
+        <button onclick="searchImages()">🔍 Search</button>
+        <input type="file" id="fileInput" accept="image/*" multiple style="display: none;">
+        <button onclick="uploadImages()">📷 Upload</button>
+      </div>
+      <div class="gallery" id="gallery"></div>
+    </div>
+  </div>
+
+  <!-- Auth Modal -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-form">
+      <span class="close-auth" onclick="closeAuthModal()">&times;</span>
+      
+      <!-- Login Form -->
+      <div id="loginForm">
+        <h2>Login to Your Account</h2>
+        <form onsubmit="login(event)">
+          <div class="form-group">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+          </div>
+          <button type="submit" class="submit-btn">Login</button>
+        </form>
+        <div class="switch-form">
+          Don't have an account? <a href="#" onclick="showSignupForm()">Sign Up</a>
+        </div>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signupForm" style="display: none;">
+        <h2>Create New Account</h2>
+        <form onsubmit="signup(event)">
+          <div class="form-group">
+            <label for="signupName">Full Name:</label>
+            <input type="text" id="signupName" required>
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" required>
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" required>
+          </div>
+          <button type="submit" class="submit-btn">Sign Up</button>
+        </form>
+        <div class="switch-form">
+          Already have an account? <a href="#" onclick="showLoginForm()">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imageModal" class="modal">
+    <span class="close-btn" onclick="closeModal()">&times;</span>
+    <button class="download-btn" onclick="downloadImage()" title="DOWNLOAD NOW">📥</button>
+    <div class="modal-content">
+      <img class="modal-image" id="modalImage" alt="">
+    </div>
+  </div>
+
+  <script>
+    // API Keys
+    const PEXELS_API_KEY = "fpWfjedYtUsLiEPx4PRat4mjBRo44spbAQY6eIODDp68Q8WYpj5jTrj4";
+    const PIXABAY_API_KEY = "49779190-56ac3b8e27bb9397dd241c851";
+
+    // Global variables
+    let currentUser = null;
+    let currentImageUrl = '';
+    let currentImageName = '';
+
+    // Initialize app
+    document.addEventListener('DOMContentLoaded', function() {
+      checkUserSession();
+      setupEventListeners();
+    });
+
+    function setupEventListeners() {
+      // Search input enter key
+      document.getElementById("searchInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          searchImages();
+        }
+      });
+
+      // File input change
+      document.getElementById('fileInput').addEventListener('change', function(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+          displayUploadedImages(files);
+        }
+      });
+
+      // Modal click outside to close
+      document.getElementById("imageModal").onclick = function(event) {
+        if (event.target == this) {
+          closeModal();
+        }
+      };
+
+      document.getElementById("authModal").onclick = function(event) {
+        if (event.target == this) {
+          closeAuthModal();
+        }
+      };
+    }
+
+    // Auth Functions
+    function showLoginForm() {
+      document.getElementById('authModal').style.display = 'block';
+      document.getElementById('loginForm').style.display = 'block';
+      document.getElementById('signupForm').style.display = 'none';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showSignupForm() {
+      document.getElementById('authModal').style.display = 'block';
+      document.getElementById('loginForm').style.display = 'none';
+      document.getElementById('signupForm').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function login(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      // Simple validation (in real app, this would be server-side)
+      const users = JSON.parse(localStorage.getItem('imageExplorerUsers') || '[]');
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        showApp();
+        closeAuthModal();
+        alert('Login successful! Welcome back ' + user.name);
+      } else {
+        alert('Invalid email or password!');
+      }
+    }
+
+    function signup(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (password !== confirmPassword) {
+        alert('Passwords do not match!');
+        return;
+      }
+
+      // Check if user already exists
+      const users = JSON.parse(localStorage.getItem('imageExplorerUsers') || '[]');
+      if (users.find(u => u.email === email)) {
+        alert('User with this email already exists!');
+        return;
+      }
+
+      // Create new user
+      const newUser = {
+        id: Date.now(),
+        name: name,
+        email: email,
+        password: password,
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(newUser);
+      localStorage.setItem('imageExplorerUsers', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(newUser));
+      
+      currentUser = newUser;
+      showApp();
+      closeAuthModal();
+      alert('Account created successfully! Welcome ' + name);
+    }
+
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('currentUser');
+      showWelcomeScreen();
+    }
+
+    function checkUserSession() {
+      const savedUser = localStorage.getItem('currentUser');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        showApp();
+      } else {
+        showWelcomeScreen();
+      }
+    }
+
+    function showWelcomeScreen() {
+      document.getElementById('welcomeScreen').style.display = 'block';
+      document.getElementById('appContent').classList.remove('active');
+      document.getElementById('authButtons').style.display = 'flex';
+      document.getElementById('userInfo').style.display = 'none';
+    }
+
+    function showApp() {
+      document.getElementById('welcomeScreen').style.display = 'none';
+      document.getElementById('appContent').classList.add('active');
+      document.getElementById('authButtons').style.display = 'none';
+      document.getElementById('userInfo').style.display = 'flex';
+      document.getElementById('userName').textContent = currentUser.name;
+    }
+
+    // Image Search Functions
+    async function searchImages() {
+      if (!currentUser) {
+        alert('Please login first!');
+        return;
+      }
+
+      const query = document.getElementById("searchInput").value;
+      if (!query) return alert("Please enter a search term!");
+
+      try {
+        const [pexelsPhotos, pixabayPhotos] = await Promise.all([
+          fetchPexelsImages(query),
+          fetchPixabayImages(query)
+        ]);
+
+        const allPhotos = [...pexelsPhotos, ...pixabayPhotos];
+        displayImages(allPhotos);
+      } catch (err) {
+        console.error(err);
+        alert("Error: " + err.message);
+      }
+    }
+
+    async function fetchPexelsImages(query) {
+      try {
+        const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=6`, {
+          headers: { Authorization: PEXELS_API_KEY }
+        });
+        const data = await res.json();
+        return (data.photos || []).map(photo => ({
+          ...photo,
+          source: 'Pexels'
+        }));
+      } catch (error) {
+        console.error("Pexels failed:", error);
+        return [];
+      }
+    }
+
+    async function fetchPixabayImages(query) {
+      try {
+        const res = await fetch(`https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(query)}&image_type=photo&per_page=6`);
+        const data = await res.json();
+        return (data.hits || []).map(hit => ({
+          src: { medium: hit.webformatURL, large: hit.largeImageURL },
+          alt: hit.tags,
+          photographer: hit.user,
+          photographer_url: hit.pageURL,
+          source: 'Pixabay'
+        }));
+      } catch (error) {
+        console.error("Pixabay failed:", error);
+        return [];
+      }
+    }
+
+    function displayImages(photos) {
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+      
+      if (photos.length === 0) {
+        gallery.innerHTML = '<p style="color: #38bdf8; text-align: center; font-size: 18px; grid-column: 1 / -1;">No images found! Try different keywords.</p>';
+        return;
+      }
+      
+      photos.forEach(photo => {
+        const card = document.createElement("div");
+        card.className = "card";
+        const imageName = photo.alt || `image-${Date.now()}`;
+        card.innerHTML = `
+          <img src="${photo.src.medium}" alt="${photo.alt}" onclick="openModal('${photo.src.large || photo.src.medium}', '${imageName}')">
+          <div class="credit">Photo by <a href="${photo.photographer_url}" target="_blank">${photo.photographer}</a> on ${photo.source}</div>
+        `;
+        gallery.appendChild(card);
+      });
+    }
+
+    // Upload Functions
+    function uploadImages() {
+      if (!currentUser) {
+        alert('Please login first!');
+        return;
+      }
+      document.getElementById('fileInput').click();
+    }
+
+    function displayUploadedImages(files) {
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+      
+      Array.from(files).forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+              <img src="${e.target.result}" alt="Uploaded image ${index + 1}" onclick="openModal('${e.target.result}', '${file.name}')">
+              <div class="credit">Your Image: ${file.name}</div>
+            `;
+            gallery.appendChild(card);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // Modal Functions
+    function openModal(imageSrc, imageName = 'image') {
+      document.getElementById("imageModal").style.display = "block";
+      document.getElementById("modalImage").src = imageSrc;
+      currentImageUrl = imageSrc;
+      currentImageName = imageName.replace(/\.[^/.]+$/, "");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("imageModal").style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      fetch(currentImageUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          link.href = url;
+          link.download = currentImageName + '.jpg';
+          link.click();
+          window.URL.revokeObjectURL(url);
+        })
+        .catch(() => {
+          window.open(currentImageUrl, '_blank');
+        });
+    }
+
+
+
+
+    
+  </script>
+</body>
+</html>
